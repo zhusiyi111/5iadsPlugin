@@ -10,6 +10,117 @@ s.onload = function() {
 
 
 
+
+// 小窗 供按键精灵识别
+var floatDiv = '<div id="floatDiv"></div>';
+$('body').append(floatDiv);
+$('#floatDiv').css({
+	width:'30px',
+	height:'30px',
+	position:'fixed',
+	top:0,
+	left:0,
+	'z-index':99999,
+	'background-color':'green'
+})
+
+
+
+// 判断是否成功
+var timer = setInterval(function(){
+
+	var isSuccess = (function(){
+		if($('#urlcheck').hasClass('success')){
+			return true;
+		}else{
+			return false;
+		}
+	})();
+
+	// 查看答案是否通过并更新悬浮窗颜色
+	if(isSuccess && !$('#newadurl').is(':hidden')){
+		$('#floatDiv').css('background-color','green');
+	}else{
+		$('#floatDiv').css('background-color','black');
+	}
+
+	if(isSuccess){
+
+		uploadInfo();
+
+
+	}	
+
+
+
+
+
+},200);
+
+
+
+function uploadInfo(){
+
+	var url = $('#workUrl').val(),	//搜索引擎
+	clickId = $('#clickid').val(),	//任务id(假)
+	realId = clickId.charAt(2)+clickId.charAt(3)+clickId.charAt(5)+clickId.charAt(7)+clickId.charAt(9),	//真实id
+	answer = $('#newadurl').val(),	//答案
+	lastRequest = $('.lastrequest').text(),	//最后要求
+	img = $('.yaoqiu').find('img').eq(0).attr('src'),	//图片
+	stepText = $('.yaoqiu').text();
+
+	//提取搜索关键字
+	var keyword = '';
+	try{
+	var text = stepText;
+	text = text.replace(/\s/g,'#');
+	text = text.replace(/((百度一下)|(输入关键词)|(搜索关键词)|(搜索)|(搜素)|(搜索#)|(输入))(:|：|\s|#)/g,'searchBegin');
+	text = text.match(/(searchBegin)[\u4e00-\u9fa5a-zA-Z0-9“”"]+/)[0];
+	keyword = text.replace(/searchBegin/g,"");
+	// text = text.replace(/(搜索关键词：)|(搜索：)/,'domysearch');
+	// text = text.replace(/\s/g,'<br>');
+	// text = text.match(/(domysearch)(?:(?!<br>).|\n)*?(<br>)/)[0];
+	// keyword = text.replace(/domysearch/g,"").replace(/<br>/g,"");
+	}catch(e){
+
+	}
+
+	var data = {
+		url:url,
+		clickId:clickId,
+		realId:realId,
+		answer:answer,
+		lastRequest:lastRequest,
+		img:img,
+		stepText:stepText,
+		keyword:keyword
+	}
+
+	chrome.runtime.sendMessage({
+		J_method:'getWebsiteAndTitle'
+	}, function(res) {
+	  data = $.extend(data,res);
+	  sendInfoToBg(data);
+	});
+	
+}
+
+
+// 把成功的任务信息发到后台，更新信息
+function sendInfoToBg(data){
+	chrome.runtime.sendMessage({
+		J_method:'updateTaskInfo'
+	}, function(res) {
+	  data = $.extend(data,res);
+	  sendInfoToBg(data);
+	});
+}
+
+$(document).click(function(){
+	uploadInfo();
+})
+
+
 // var a = setInterval(function(){
 // 	if($){
 // 		window.my = {};

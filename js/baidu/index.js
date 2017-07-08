@@ -20,19 +20,22 @@ $(document).delegate('.t','click',function(){
 	website = website.match(/[^\/]+/)[0];
 
 	var data = {
-		INTERFACE:'addTitleAndWebsite',
 		title:title,
 		website:website
 	};
 
-	chrome.runtime.sendMessage(data, function(response){
+	//把信息发到后台
+	chrome.runtime.sendMessage({
+		J_method:'setWebsiteAndTitle',
+		data:data
+	}, function(res) {
 
 	});
 
 	var url = $(this).find('a[data-click]').attr('href'); 
 	setTimeout(function(){
 		window.location.href = url;
-	},5000);
+	},3140);
 	
 	return false;
 })
@@ -68,12 +71,9 @@ function sendMsgToBg(data){
 
 
 
-var port = chrome.runtime.connect({name: "敲门"});
-port.postMessage({joke: "敲门"});
-port.onMessage.addListener(function(msg) {
-	console.log(msg);
-  if (msg.question == "是谁？")
-    port.postMessage({answer: "女士"});
-  else if (msg.question == "哪位女士？")
-    port.postMessage({answer: "Bovary 女士"});
-});
+// 
+// 
+// 
+
+
+

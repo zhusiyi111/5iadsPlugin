@@ -1,25 +1,25 @@
 
 
-chrome.runtime.onMessage.addListener(function(data, sender, sendResponse){
+// chrome.runtime.onMessage.addListener(function(data, sender, sendResponse){
 	
-	if(data.INTERFACE === 'addTitleAndWebsite'){
-		addTitleAndWebsite(data,sender,sendResponse);
-	}
+// 	if(data.INTERFACE === 'addTitleAndWebsite'){
+// 		// addTitleAndWebsite(data,sender,sendResponse);
+// 	}
 
-	else if(data.sender==='5iads'){
-		window.sender = sender;
-		process5iads(data, sender, sendResponse);
-	}else if(data.sender==='baidu'){
-		processbaidu(data, sender, sendResponse);
-	}
-	else if(data.sender==='mbaidu'){
-		processmbaidu(data, sender, sendResponse);
-	}
+// 	else if(data.sender==='5iads'){
+// 		window.sender = sender;
+// 		process5iads(data, sender, sendResponse);
+// 	}else if(data.sender==='baidu'){
+// 		// processbaidu(data, sender, sendResponse);
+// 	}
+// 	else if(data.sender==='mbaidu'){
+// 		processmbaidu(data, sender, sendResponse);
+// 	}
 	
 
 	
- 	return true;
-});
+//  	return true;
+// });
 
 
 
@@ -135,32 +135,32 @@ function processmbaidu(data, sender, sendResponse){
 	}
 }
 
-function addTitleAndWebsite(data,sender,sendResponse){
+// function addTitleAndWebsite(data,sender,sendResponse){
 
-	window.data.title = data.title;
-	window.data.website = data.website;
+// 	window.data.title = data.title;
+// 	window.data.website = data.website;
 
-	var data = {
-			taskid:window.data.clickid,
-			realId:window.data.realId,
-			url:window.data.url,
-			keyword:window.data.keyword,
-			answer:window.data.answer,
-			title:window.data.title,
-			website:window.data.website,
-			searchUrl:getSearchUrl(window.data.url,window.data.keyword,window.data.website)
-		}
-	console.log(data);
+// 	var data = {
+// 			taskid:window.data.clickid,
+// 			realId:window.data.realId,
+// 			url:window.data.url,
+// 			keyword:window.data.keyword,
+// 			answer:window.data.answer,
+// 			title:window.data.title,
+// 			website:window.data.website,
+// 			searchUrl:getSearchUrl(window.data.url,window.data.keyword,window.data.website)
+// 		}
+// 	console.log(data);
 
-	$.ajax({
-		url:'http://localhost:3000/task/addTaskInfo',
-		method:'get',
-		data:data,
-		success:function(data){
+// 	$.ajax({
+// 		url:'http://localhost:3000/task/addTaskInfo',
+// 		method:'get',
+// 		data:data,
+// 		success:function(data){
 
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
 
 
@@ -194,3 +194,58 @@ chrome.commands.onCommand.addListener(function(cmd){
 
 
 
+chrome.runtime.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function(msg) {
+  	console.log(msg);
+    if (msg.joke == "敲门")
+      port.postMessage({question: "是谁？"});
+    else if (msg.answer == "女士")
+      port.postMessage({question: "哪位女士？"});
+    else if (msg.answer == "Bovary 女士")
+      port.postMessage({question: "我没听清楚。"});
+  });
+});
+
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+  	if(sender.url==='http://www.5iads.cn/zhuan.asp?zhuan=click'){
+		processClickAds(request, sender, sendResponse);
+  	}else if(/www\.baidu\.com/.test(sender.url)){
+  		console.log(request);
+  		processBaidu(request, sender, sendResponse);
+  	}
+
+  });
+
+function processBaidu(request, sender, sendResponse){
+	// 设置localStroge中的搜索链接及title	
+	if(request.J_method==='setWebsiteAndTitle'){
+		setWebsiteAndTitle(request);
+	}
+}
+
+function processClickAds(request, sender, sendResponse){
+	// 获得localStroge中的搜索链接及title
+	if(request.J_method==='getWebsiteAndTitle'){
+		sendResponse(getWebsiteAndTitle());
+	}
+}
+
+function setWebsiteAndTitle(request) {
+	var website = request.data.website,
+		title = request.data.title;
+
+	localStorage.setItem('website',website),
+	localStorage.setItem('title',title);
+}
+
+function getWebsiteAndTitle() {
+	var website = localStorage.getItem('website'),
+		title = localStorage.getItem('title');
+	var res = {
+		website:website,
+		title:title
+	}
+	return res;
+}
