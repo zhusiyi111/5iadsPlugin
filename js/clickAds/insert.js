@@ -1,8 +1,8 @@
 
 
 
-// 加载广告列表  主要改动：修改请求弹窗内容
-function loadClickList(pagenum){
+// 加载广告列表  主要改动：修改请求弹窗内容 
+window.loadClickList = function(pagenum){console.log(1111);
 	$.ajax({
 		url : '/module/click/',
 		type : 'post',	

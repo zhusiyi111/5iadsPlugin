@@ -1,4 +1,16 @@
 
+// 动态加载js脚本文件
+function loadScript(url) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+    document.body.appendChild(script);
+}
+// 测试
+loadScript("./insert.js");
+
+
+
 
 var a = setInterval(function(){
 	if($){
