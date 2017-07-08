@@ -212,8 +212,9 @@ chrome.runtime.onMessage.addListener(
   	if(sender.url==='http://www.5iads.cn/zhuan.asp?zhuan=click'){
 		processClickAds(request, sender, sendResponse);
   	}else if(/www\.baidu\.com/.test(sender.url)){
-  		console.log(request);
   		processBaidu(request, sender, sendResponse);
+  	}else if(/m\.baidu\.com/.test(sender.url)){
+		processMBaidu(request, sender, sendResponse);
   	}
 
   });
@@ -229,6 +230,18 @@ function processClickAds(request, sender, sendResponse){
 	// 获得localStroge中的搜索链接及title
 	if(request.J_method==='getWebsiteAndTitle'){
 		sendResponse(getWebsiteAndTitle());
+	// 更新任务信息
+	}else if(request.J_method==='updateTaskInfo'){
+		console.log(request.data)
+		updateTaskInfo(request.data);
+	}
+}
+
+function processMBaidu(request, sender, sendResponse){
+	console.log(request);
+	// 设置localStroge中的搜索链接及title	
+	if(request.J_method==='setWebsiteAndTitle'){
+		setWebsiteAndTitle(request);
 	}
 }
 
@@ -248,4 +261,15 @@ function getWebsiteAndTitle() {
 		title:title
 	}
 	return res;
+}
+
+function updateTaskInfo(data){
+	$.ajax({
+		url:'http://localhost:3000/task/updateTaskInfo',
+		method:'get',
+		data:data,
+		success:function(data){
+
+		}
+	});
 }

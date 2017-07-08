@@ -2,12 +2,6 @@
 // 	console.log(data);
 // })
 
-var timer = setInterval(function(){
-	if($('#content_left').length!==0){
-		init();
-		clearInterval(timer);
-	}	
-})
 
 
 $(document).delegate('.t','click',function(){
@@ -35,37 +29,37 @@ $(document).delegate('.t','click',function(){
 	var url = $(this).find('a[data-click]').attr('href'); 
 	setTimeout(function(){
 		window.location.href = url;
-	},3140);
+	},0);
 	
 	return false;
 })
 
 
 
-function init(){
+// function init(){
 
-	sendMsgToBg('baidu');
+// 	sendMsgToBg('baidu');
 
 
 	
-}
+// }
 
-function sendMsgToBg(data){
-	var data = {}
-	data.sender = 'baidu';
-	chrome.runtime.sendMessage(data, function(response){
-		console.log(response);
-		var target = $('h3').filter(function(){
-			var _this = $(this);
-			if(_this.text().indexOf(response)!==-1){
-				return true;
-			}
-			return false;
-		}).find('a');
-		console.log(target);
-		target.trigger('click');
-	});
-}
+// function sendMsgToBg(data){
+// 	var data = {}
+// 	data.sender = 'baidu';
+// 	chrome.runtime.sendMessage(data, function(response){
+// 		console.log(response);
+// 		var target = $('h3').filter(function(){
+// 			var _this = $(this);
+// 			if(_this.text().indexOf(response)!==-1){
+// 				return true;
+// 			}
+// 			return false;
+// 		}).find('a');
+// 		console.log(target);
+// 		target.trigger('click');
+// 	});
+// }
 
 
 

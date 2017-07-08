@@ -32,8 +32,8 @@
       "js": ["static/jquery-1.8.1.js","js/baidu/index.js"]
     },
     {
-      "matches": ["https://m.baidu.com/*"],
-      "js": ["static/jquery-1.8.1.js","js/mbaidu.js"]
+      "matches": ["*://m.baidu.com/*"],
+      "js": ["static/jquery-1.8.1.js","js/mbaidu/index.js"]
     },
     {
       "matches": ["http://www.5iads.cn/zhuan.asp?zhuan=click"],

@@ -30,7 +30,7 @@ $('#floatDiv').css({
 var timer = setInterval(function(){
 
 	var isSuccess = (function(){
-		if($('#urlcheck').hasClass('success')){
+		if($('#urlcheck').hasClass('success') && !$('#urlcheck').is(':hidden')){
 			return true;
 		}else{
 			return false;
@@ -38,24 +38,41 @@ var timer = setInterval(function(){
 	})();
 
 	// 查看答案是否通过并更新悬浮窗颜色
-	if(isSuccess && !$('#newadurl').is(':hidden')){
+	if(isSuccess){
 		$('#floatDiv').css('background-color','green');
 	}else{
 		$('#floatDiv').css('background-color','black');
 	}
 
-	if(isSuccess){
-
-		uploadInfo();
-
-
-	}	
 
 
 
 
 
 },200);
+
+var lastImg = '';
+
+var successTimer = setInterval(function(){
+
+	var isSuccess = (function(){
+		if($('#urlcheck').hasClass('success') && !$('#urlcheck').is(':hidden')){
+			return true;
+		}else{
+			return false;
+		}
+	})();
+
+	var img = $('.yaoqiu').find('img').eq(0).attr('src');
+
+	if( isSuccess && lastImg !== img ){
+		uploadInfo();
+		lastImg = img;
+	}	
+
+})
+
+
 
 
 
@@ -99,8 +116,8 @@ function uploadInfo(){
 	chrome.runtime.sendMessage({
 		J_method:'getWebsiteAndTitle'
 	}, function(res) {
-	  data = $.extend(data,res);
-	  sendInfoToBg(data);
+		data = $.extend(data,res);
+		sendInfoToBg(data);
 	});
 	
 }
@@ -108,17 +125,23 @@ function uploadInfo(){
 
 // 把成功的任务信息发到后台，更新信息
 function sendInfoToBg(data){
+	console.log(data);
 	chrome.runtime.sendMessage({
-		J_method:'updateTaskInfo'
+		J_method:'updateTaskInfo',
+		data:data
 	}, function(res) {
-	  data = $.extend(data,res);
-	  sendInfoToBg(data);
+
 	});
 }
 
-$(document).click(function(){
-	uploadInfo();
+
+// 点过的变绿
+$(document).delegate('.zhuanclick','click',function(){
+	console.log($(this).find('.title'));
+	$(this).find('.title').css('color','green');
 })
+
+
 
 
 // var a = setInterval(function(){
