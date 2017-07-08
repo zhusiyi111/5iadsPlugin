@@ -220,6 +220,7 @@ function processCheckCode(checkCode){
 
 
 var s = document.createElement('script');
+$(s).attr('charset','GB2312')
 s.src = chrome.extension.getURL('js/my5iads.js');
 s.onload = function() {
     this.parentNode.removeChild(this);

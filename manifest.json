@@ -18,10 +18,10 @@
   },
   "background": { "scripts": ["static/jquery-1.8.1.js","js/background.js"] },
   "content_scripts": [
-    // {
-    //   "matches": ["http://www.5iads.cn/*"],
-    //   "js": ["static/jquery-1.8.1.js","js/5iads.js"]
-    // },
+    {
+      "matches": ["http://www.5iads.cn/*"],
+      "js": ["static/jquery-1.8.1.js","js/publicInsert/index.js"]
+    },
     {
       "matches": ["https://www.baidu.com/*"],
       "js": ["static/jquery-1.8.1.js","js/baidu.js"]
@@ -46,7 +46,9 @@
     } 
   },
   "web_accessible_resources" : [
-        "js/my5iads.js"
+        "js/my5iads.js",
+        "js/*",
+        "js/*/*.js"
   ],
   // // 引入一个脚本
   // "content_scripts": [

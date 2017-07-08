@@ -1,8 +1,15 @@
 
 
-
 // 加载广告列表  主要改动：修改请求弹窗内容 
-window.loadClickList = function(pagenum){console.log(1111);
+window.loadClickList = function(pagenum){
+	var showtype;
+	if(showtype !=null && showtype.toString().length>1)
+	{
+	   showtype = showtype ;
+	} else {showtype ="list";}	//grid
+
+
+
 	$.ajax({
 		url : '/module/click/',
 		type : 'post',	
@@ -90,11 +97,14 @@ window.loadClickList = function(pagenum){console.log(1111);
 				}else{
 					$('#clickpage').html("<span class=\"load-more\" onclick=\"loadClickList();\">点击刷新广告</span>");
 				}
+
+				//	加载完列表后
+				afterGetList();
 				
 				/*加载点击广告列表结束*/
 				/*显示广告内容开始*/
 				$.each($('.zhuanitem'), function (index, value) {
-						$(this).on('click', '.zhuanclick', function () {
+						$(this).on('click', '.zhuanclick', function () {console.log(this);
 							CurrentA = $('.zhuanitem').eq(index)
 							
 							$.ajax({
@@ -262,11 +272,11 @@ window.loadClickList = function(pagenum){console.log(1111);
 														tablehtml +="} );	";
 														tablehtml +="clip.on( 'complete', function(client, args) {";
 														tablehtml +="firstclick();";
-														tablehtml +=" success_UI(\"复制成功，复制内容为：\",args.text,500); ";
+														tablehtml +=' success_UI("复制成功，复制内容为:",args.text,500); ';
 														tablehtml +="$('#fristtishi').html('网址已复制，请手动粘贴到浏览器地栏中');";
 														tablehtml +="} );";
 														tablehtml +="}) ;";
-														tablehtml +="</script>";
+														tablehtml +="</"+"script>";
 													}
 													//alert(value.id); 
 													a_id = json_content.id;
@@ -294,6 +304,8 @@ window.loadClickList = function(pagenum){console.log(1111);
 											setTimeout(function(){
 												if (clickVerify ==0){$('#tasklist_dig').dialog('open');$('#YzmCheck').val('success');$("#tasklist_dig").css({height: 'auto'})}
 												loadingClose();	//关闭loading
+
+												afterPopShow();
 											},300);																					
 										}
 									}
@@ -306,5 +318,54 @@ window.loadClickList = function(pagenum){console.log(1111);
 				$('#tasklist_dig').html('数据加载超时！请稍候再刷新试试！')
 			}
 		}
+	})
+}
+$(function(){
+	loadClickList();
+})
+
+
+
+// 获取到任务列表后的操作
+function afterGetList(){
+	displayId();
+}
+
+// 打开悬浮窗之后的操作
+function afterPopShow(){
+	// 弹出框内容完整显示
+	$('#mainClick').show()
+
+	// 提交按钮可点击
+	$('#TijiaoButton').removeAttr('disabled'); 
+
+	// 不需要新开窗口
+	$('#firstCk').val(2);
+
+
+	// 移动验证码到顶部
+	var yzmImage = $('.yianzhengma img');
+	$('#CopyUrl').after(yzmImage)
+
+	// 移动验证码到顶部
+	var yzmImage = $('.yianzhengma img');
+	$('#CopyUrl').after(yzmImage)
+
+	// 放弃任务移到顶部
+	var abandon = $('#abandon');
+	$('.yaoqiu').prepend(abandon)
+
+}
+
+
+
+// 在任务名称后显示id
+function displayId(){
+	$('.zhuanitem').each(function(){
+		var _this = $(this),
+			clickid = _this.attr('dataid');
+		var realId = clickid.charAt(2)+clickid.charAt(3)+clickid.charAt(5)+clickid.charAt(7)+clickid.charAt(9);
+		var html = '<em>真实任务id：</em><span style="color:blue" class="realid">'+realId+'</span><span style="display:none" class="myid">'+clickid+'</span>';
+		_this.find('.zhuanclick').append(html);
 	})
 }
